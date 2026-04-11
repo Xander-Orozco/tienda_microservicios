@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - catalog-service
+      - recommendation-service
+    networks:
+      - app-network
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  catalog-service:
+    build: ./catalog-service
+    container_name: catalog-service
+    networks:
+      - app-network
+
+  recommendation-service:
+    build: ./recommendation-service
+    container_name: recommendation-service
+    depends_on:
+      - user-service
+      - catalog-service
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
