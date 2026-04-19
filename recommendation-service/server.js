@@ -4,51 +4,33 @@ const axios = require("axios");
 const app = express();
 app.use(express.json());
 
-app.post("/recommendation", async (req, res) => {
-  try {
-    const { userId } = req.body;
+app.post("/recomendacion", async (req,res)=>{
 
-    // 🔹 Obtener usuario por ID
-    const userResponse = await axios.get(
-      `http://user-service:3001/users/${userId}`
-    );
+  const { idUsuario } = req.body;
 
-    const user = userResponse.data;
+  const respuestaUsuario =
+    await axios.get(`http://user-service:3001/usuarios/${idUsuario}`);
 
-    // 🔹 Obtener productos
-    const productResponse = await axios.get(
-      "http://catalog-service:3002/products"
-    );
+  const usuario = respuestaUsuario.data;
 
-    const products = productResponse.data;
+  const respuestaProductos =
+    await axios.get("http://catalog-service:3002/productos");
 
-    // 🔹 Lógica "inteligente" basada en busto (simple pero válida)
-    let recommendedSize = "M";
+  const productos = respuestaProductos.data;
 
-    if (user.bust < 85) recommendedSize = "S";
-    else if (user.bust >= 85 && user.bust <= 95) recommendedSize = "M";
-    else recommendedSize = "L";
+  let talla = "M";
 
-    // 🔹 Filtrar productos por talla
-    const filtered = products.filter(p => p.size === recommendedSize);
+  if(usuario.busto < 85) talla = "S";
+  else if(usuario.busto > 95) talla = "L";
 
-    const recommendation = filtered[0] || products[0];
+  const producto = productos.find(p => p.talla === talla) || productos[0];
 
-    res.json({
-      user,
-      recommendedSize,
-      recommendation
-    });
+  res.json({
+    usuario,
+    tallaRecomendada: talla,
+    producto
+  });
 
-  } catch (error) {
-    console.error(error.message);
-
-    res.status(500).json({
-      error: "Error en recommendation-service"
-    });
-  }
 });
 
-app.listen(3003, () => {
-  console.log("Recommendation service running on 3003");
-});
+app.listen(3003);

@@ -4,58 +4,30 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(express.json());
 
-// 🔹 Conexión a MongoDB
-mongoose.connect("mongodb://mongodb:27017/tienda_db")
-  .then(() => console.log("MongoDB conectado"))
-  .catch(err => console.log(err));
+mongoose.connect("mongodb://mongodb:27017/tienda_db");
 
-// 🔹 Esquema
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  bust: Number,
-  waist: Number,
-  hips: Number
+const UsuarioSchema = new mongoose.Schema({
+  nombre: String,
+  correo: String,
+  busto: Number,
+  cintura: Number,
+  cadera: Number
 });
 
-const User = mongoose.model("User", UserSchema);
+const Usuario = mongoose.model("Usuario", UsuarioSchema);
 
-// 🔹 Obtener todos los usuarios
-app.get("/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener usuarios" });
-  }
+app.get("/usuarios", async (req,res)=>{
+  res.json(await Usuario.find());
 });
 
-// 🔹 Obtener usuario por ID (CLAVE 🔥)
-app.get("/users/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: "Error al buscar usuario" });
-  }
+app.get("/usuarios/:id", async (req,res)=>{
+  res.json(await Usuario.findById(req.params.id));
 });
 
-// 🔹 Crear usuario
-app.post("/users", async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: "Error al crear usuario" });
-  }
+app.post("/usuarios", async (req,res)=>{
+  const usuario = new Usuario(req.body);
+  await usuario.save();
+  res.json(usuario);
 });
 
-app.listen(3001, () => {
-  console.log("User service running on 3001");
-});
+app.listen(3001);

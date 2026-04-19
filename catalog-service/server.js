@@ -1,17 +1,28 @@
 const express = require("express");
+const mongoose = require("mongoose");
 
 const app = express();
+app.use(express.json());
 
-const products = [
-  { id: 1, name: "Camiseta Oversize", price: 20, size: "M" },
-  { id: 2, name: "Jeans Slim Fit", price: 45, size: "32" },
-  { id: 3, name: "Chaqueta Denim", price: 60, size: "L" }
-];
+mongoose.connect("mongodb://mongodb:27017/tienda_db");
 
-app.get("/products", (req, res) => {
-  res.json(products);
+const ProductoSchema = new mongoose.Schema({
+  nombre: String,
+  precio: Number,
+  talla: String,
+  stock: Number
 });
 
-app.listen(3002, () => {
-  console.log("Catalog service running on 3002");
+const Producto = mongoose.model("Producto", ProductoSchema);
+
+app.get("/productos", async (req,res)=>{
+  res.json(await Producto.find());
 });
+
+app.post("/productos", async (req,res)=>{
+  const producto = new Producto(req.body);
+  await producto.save();
+  res.json(producto);
+});
+
+app.listen(3002);

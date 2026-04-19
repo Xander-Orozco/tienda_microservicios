@@ -32,5 +32,15 @@ jobs:
           cd recommendation-service
           npm install
 
+      - name: Instalar dependencias Cart Service
+        run: |
+          cd cart-service
+          npm install
+
+      - name: Instalar dependencias Payment Service
+        run: |
+          cd payment-service
+          npm install
+
       - name: Validación final
         run: echo "Proyecto validado correctamente"

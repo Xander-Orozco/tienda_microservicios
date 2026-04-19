@@ -11,8 +11,10 @@ services:
       - user-service
       - catalog-service
       - recommendation-service
+      - cart-service
+      - payment-service
     networks:
-      - app-network
+      - red-app
 
   user-service:
     build: ./user-service
@@ -20,13 +22,15 @@ services:
     depends_on:
       - mongodb
     networks:
-      - app-network
+      - red-app
 
   catalog-service:
     build: ./catalog-service
     container_name: catalog-service
+    depends_on:
+      - mongodb
     networks:
-      - app-network
+      - red-app
 
   recommendation-service:
     build: ./recommendation-service
@@ -35,7 +39,23 @@ services:
       - user-service
       - catalog-service
     networks:
-      - app-network
+      - red-app
+
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    depends_on:
+      - mongodb
+    networks:
+      - red-app
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    depends_on:
+      - mongodb
+    networks:
+      - red-app
 
   mongodb:
     image: mongo
@@ -43,10 +63,10 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - app-network
+      - red-app
 
 volumes:
   mongo_data:
 
 networks:
-  app-network:
+  red-app:
