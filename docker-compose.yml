@@ -1,7 +1,7 @@
 version: "3.8"
-
+ 
 services:
-
+ 
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -15,7 +15,7 @@ services:
       - payment-service
     networks:
       - red-app
-
+ 
   user-service:
     build: ./user-service
     container_name: user-service
@@ -23,7 +23,7 @@ services:
       - mongodb
     networks:
       - red-app
-
+ 
   catalog-service:
     build: ./catalog-service
     container_name: catalog-service
@@ -31,7 +31,7 @@ services:
       - mongodb
     networks:
       - red-app
-
+ 
   recommendation-service:
     build: ./recommendation-service
     container_name: recommendation-service
@@ -40,7 +40,7 @@ services:
       - catalog-service
     networks:
       - red-app
-
+ 
   cart-service:
     build: ./cart-service
     container_name: cart-service
@@ -48,7 +48,7 @@ services:
       - mongodb
     networks:
       - red-app
-
+ 
   payment-service:
     build: ./payment-service
     container_name: payment-service
@@ -56,7 +56,7 @@ services:
       - mongodb
     networks:
       - red-app
-
+ 
   mongodb:
     image: mongo
     container_name: mongodb
@@ -64,9 +64,20 @@ services:
       - mongo_data:/data/db
     networks:
       - red-app
-
+ 
+  k6:
+    image: grafana/k6
+    container_name: k6-prueba
+    volumes:
+      - ./tests:/scripts
+    depends_on:
+      - api-gateway
+    command: run /scripts/performance-test.js
+    networks:
+      - red-app
+ 
 volumes:
   mongo_data:
-
+ 
 networks:
   red-app:
