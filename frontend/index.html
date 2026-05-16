@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartFit Fashion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #f9f6f1;
+    --warm-white: #fefcf8;
+    --blush: #e8c4b8;
+    --rose: #c4776a;
+    --deep-rose: #8b4a40;
+    --espresso: #2c1f1a;
+    --taupe: #9e8e84;
+    --sand: #d4c4b8;
+    --sage: #8a9e8a;
+    --gold: #c9a96e;
+    --light-taupe: #ede8e3;
+    --shadow: rgba(44,31,26,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--espresso);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(249,246,241,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--sand);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 600; letter-spacing: 0.08em;
+    color: var(--espresso); text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo span { color: var(--rose); font-style: italic; }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 0.5rem 1rem; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    font-weight: 500; letter-spacing: 0.04em; color: var(--taupe);
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--espresso); background: var(--light-taupe); }
+  .nav-btn.active { color: var(--deep-rose); background: rgba(196,119,106,0.1); }
+  .nav-cart-btn {
+    background: var(--espresso); color: var(--warm-white);
+    border: none; cursor: pointer; padding: 0.5rem 1.25rem;
+    border-radius: 20px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em;
+    display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;
+  }
+  .nav-cart-btn:hover { background: var(--deep-rose); }
+  .cart-badge {
+    background: var(--rose); color: #fff;
+    width: 18px; height: 18px; border-radius: 50%;
+    font-size: 0.7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 5rem 2rem 3rem;
+    background: linear-gradient(160deg, var(--warm-white) 0%, var(--cream) 60%, #ede0d6 100%);
+    border-radius: 20px; margin-bottom: 3rem; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '◆';
+    position: absolute; top: -20px; right: 80px;
+    font-size: 200px; color: rgba(196,119,106,0.06);
+    font-family: serif; pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block; background: rgba(196,119,106,0.12);
+    color: var(--rose); font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 300;
+    line-height: 1.1; color: var(--espresso); margin-bottom: 1rem;
+  }
+  .hero h1 em { color: var(--rose); font-style: italic; }
+  .hero p {
+    max-width: 480px; margin: 0 auto 2.5rem;
+    color: var(--taupe); line-height: 1.7; font-size: 1rem;
+  }
+  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--espresso); color: var(--warm-white);
+    border: none; cursor: pointer; padding: 0.85rem 2rem;
+    border-radius: 30px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500; letter-spacing: 0.04em;
+    transition: all 0.25s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--deep-rose); transform: translateY(-2px); }
+  .btn-secondary {
+    background: transparent; color: var(--espresso);
+    border: 1.5px solid var(--sand); cursor: pointer; padding: 0.85rem 2rem;
+    border-radius: 30px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500; letter-spacing: 0.04em;
+    transition: all 0.25s;
+  }
+  .btn-secondary:hover { border-color: var(--rose); color: var(--rose); }
+
+  /* SECTION TITLES */
+  .section-header { margin-bottom: 2rem; }
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 400; color: var(--espresso);
+    margin-bottom: 0.4rem;
+  }
+  .section-header p { color: var(--taupe); font-size: 0.9rem; }
+  .section-divider {
+    width: 40px; height: 2px; background: var(--rose);
+    margin: 0.75rem 0 1rem;
+  }
+
+  /* PRODUCT GRID */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .product-card {
+    background: var(--warm-white); border-radius: 16px;
+    border: 1px solid var(--light-taupe);
+    overflow: hidden; transition: all 0.3s; cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+  .product-img {
+    height: 220px; background: linear-gradient(135deg, var(--light-taupe), var(--sand));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; position: relative;
+  }
+  .product-tag {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--espresso); color: var(--warm-white);
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em;
+    padding: 0.25rem 0.6rem; border-radius: 10px;
+  }
+  .product-info { padding: 1.25rem; }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem;
+    color: var(--espresso);
+  }
+  .product-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
+  .product-price { font-size: 1.1rem; font-weight: 500; color: var(--deep-rose); }
+  .product-talla {
+    background: var(--light-taupe); color: var(--taupe);
+    font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.6rem; border-radius: 8px;
+  }
+  .product-stock { font-size: 0.78rem; color: var(--sage); margin-top: 0.3rem; }
+  .add-cart-btn {
+    width: 100%; margin-top: 1rem; padding: 0.7rem;
+    background: var(--espresso); color: var(--warm-white);
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+    letter-spacing: 0.04em; transition: all 0.2s;
+  }
+  .add-cart-btn:hover { background: var(--deep-rose); }
+
+  /* FORMS */
+  .form-card {
+    background: var(--warm-white); border-radius: 16px;
+    border: 1px solid var(--light-taupe); padding: 2rem;
+    max-width: 560px;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group.full { grid-column: 1/-1; }
+  label {
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--taupe);
+  }
+  input, select {
+    padding: 0.7rem 1rem; border: 1.5px solid var(--sand);
+    border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    color: var(--espresso); background: var(--cream);
+    transition: border-color 0.2s; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--rose); }
+  .form-hint { font-size: 0.78rem; color: var(--taupe); font-style: italic; }
+  .form-submit {
+    width: 100%; padding: 0.85rem;
+    background: var(--espresso); color: var(--warm-white);
+    border: none; border-radius: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500;
+    letter-spacing: 0.04em; margin-top: 1.5rem; transition: all 0.2s;
+  }
+  .form-submit:hover { background: var(--deep-rose); }
+  .form-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* MEDIDAS */
+  .medidas-visual {
+    background: linear-gradient(135deg, var(--light-taupe), #e8d8cf);
+    border-radius: 16px; padding: 2rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0.75rem; font-size: 0.85rem;
+    color: var(--taupe); border: 1px solid var(--sand);
+  }
+  .medidas-icon { font-size: 3rem; }
+
+  /* RECOMENDACIÓN CARD */
+  .rec-card {
+    background: linear-gradient(135deg, var(--espresso), #4a2820);
+    color: var(--warm-white); border-radius: 20px; padding: 2rem;
+    display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
+  }
+  .rec-talla {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem; font-weight: 300; line-height: 1;
+    color: var(--blush);
+  }
+  .rec-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 400; margin-bottom: 0.5rem;
+    color: var(--blush);
+  }
+  .rec-info p { color: rgba(249,246,241,0.7); font-size: 0.9rem; line-height: 1.6; }
+  .rec-producto {
+    background: rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 1rem 1.25rem; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .rec-producto h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--blush); }
+  .rec-producto p { font-size: 0.85rem; color: rgba(249,246,241,0.6); margin-top: 0.25rem; }
+
+  /* CARRITO */
+  .cart-item {
+    background: var(--warm-white); border-radius: 12px;
+    border: 1px solid var(--light-taupe); padding: 1.25rem;
+    display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1rem;
+  }
+  .cart-item-icon { font-size: 2rem; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 500; font-size: 0.95rem; }
+  .cart-item-meta { font-size: 0.82rem; color: var(--taupe); margin-top: 0.2rem; }
+  .cart-total {
+    background: var(--espresso); color: var(--warm-white);
+    border-radius: 14px; padding: 1.5rem; margin-top: 1.5rem;
+  }
+  .cart-total h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem; }
+  .cart-total-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.9rem; color: rgba(249,246,241,0.8); }
+  .cart-total-final { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 0.75rem; padding-top: 0.75rem; font-size: 1.1rem; font-weight: 500; color: var(--blush); }
+
+  /* PAGOS */
+  .pago-card {
+    background: var(--warm-white); border-radius: 12px;
+    border: 1px solid var(--light-taupe); padding: 1rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .pago-estado {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: rgba(138,158,138,0.15); color: var(--sage);
+    font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.7rem;
+    border-radius: 20px; letter-spacing: 0.04em;
+  }
+
+  /* USUARIOS */
+  .usuario-card {
+    background: var(--warm-white); border-radius: 12px;
+    border: 1px solid var(--light-taupe); padding: 1.25rem;
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;
+  }
+  .usuario-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blush), var(--sand));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600;
+    color: var(--deep-rose); flex-shrink: 0;
+  }
+  .usuario-nombre { font-weight: 500; font-size: 0.95rem; }
+  .usuario-correo { font-size: 0.82rem; color: var(--taupe); }
+  .usuario-medidas { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .medida-pill {
+    background: var(--light-taupe); color: var(--taupe);
+    font-size: 0.72rem; font-weight: 500; padding: 0.2rem 0.6rem;
+    border-radius: 8px; letter-spacing: 0.04em;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--espresso); color: var(--warm-white);
+    padding: 0.85rem 1.5rem; border-radius: 12px;
+    font-size: 0.88rem; font-weight: 500; z-index: 999;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+    max-width: 320px; box-shadow: 0 8px 24px rgba(44,31,26,0.25);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 4px solid var(--sage); }
+  .toast.error { border-left: 4px solid var(--rose); }
+
+  /* LOADING */
+  .loading {
+    display: flex; align-items: center; gap: 0.75rem;
+    color: var(--taupe); font-size: 0.9rem; padding: 2rem 0;
+  }
+  .spinner {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--sand); border-top-color: var(--rose);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center; padding: 4rem 2rem;
+    color: var(--taupe); font-size: 0.9rem;
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+
+  /* TWO COLUMN */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .nav-links .nav-btn:nth-child(n+3) { display: none; }
+    .page { padding: 1.25rem; }
+  }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .tab {
+    padding: 0.5rem 1.25rem; border-radius: 20px;
+    background: var(--light-taupe); color: var(--taupe);
+    border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 500; transition: all 0.2s;
+  }
+  .tab.active { background: var(--espresso); color: var(--warm-white); }
+
+  /* PAGE TRANSITIONS */
+  .page.active { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Smart<span>Fit</span> Fashion</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('inicio')">Inicio</button>
+    <button class="nav-btn" onclick="showPage('catalogo')">Catálogo</button>
+    <button class="nav-btn" onclick="showPage('usuarios')">Registro</button>
+    <button class="nav-btn" onclick="showPage('recomendacion')">Talla Ideal</button>
+    <button class="nav-btn" onclick="showPage('pagos')">Pagos</button>
+  </div>
+  <button class="nav-cart-btn" onclick="showPage('carrito')">
+    🛍 Carrito <span class="cart-badge" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- INICIO -->
+<div id="page-inicio" class="page active">
+  <div class="hero">
+    <span class="hero-tag">✦ Nueva colección 2025</span>
+    <h1>Moda que<br><em>te queda perfecta</em></h1>
+    <p>Descubrí tu talla ideal con nuestra tecnología de recomendación inteligente y explorá nuestra colección exclusiva.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="showPage('catalogo')">Ver colección</button>
+      <button class="btn-secondary" onclick="showPage('recomendacion')">Encontrar mi talla</button>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>¿Cómo funciona?</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-bottom:3rem;">
+    <div style="background:var(--warm-white);border-radius:16px;border:1px solid var(--light-taupe);padding:1.75rem;">
+      <div style="font-size:2rem;margin-bottom:1rem;">📏</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:0.5rem;">1. Tu registro</h3>
+      <p style="font-size:0.85rem;color:var(--taupe);line-height:1.6;">Ingresá tus medidas de busto, cintura y cadera para personalizar tu experiencia.</p>
+    </div>
+    <div style="background:var(--warm-white);border-radius:16px;border:1px solid var(--light-taupe);padding:1.75rem;">
+      <div style="font-size:2rem;margin-bottom:1rem;">🤖</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:0.5rem;">2. Recomendación</h3>
+      <p style="font-size:0.85rem;color:var(--taupe);line-height:1.6;">Nuestro sistema analiza tus medidas y sugiere la talla que mejor te va a quedar.</p>
+    </div>
+    <div style="background:var(--warm-white);border-radius:16px;border:1px solid var(--light-taupe);padding:1.75rem;">
+      <div style="font-size:2rem;margin-bottom:1rem;">🛍</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:0.5rem;">3. Comprá tranquila</h3>
+      <p style="font-size:0.85rem;color:var(--taupe);line-height:1.6;">Elegí prendas sabiendo que te van a quedar bien. Sin devoluciones, sin dudas.</p>
+    </div>
+    <div style="background:var(--warm-white);border-radius:16px;border:1px solid var(--light-taupe);padding:1.75rem;">
+      <div style="font-size:2rem;margin-bottom:1rem;">💳</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:0.5rem;">4. Pago seguro</h3>
+      <p style="font-size:0.85rem;color:var(--taupe);line-height:1.6;">Procesá tu compra de forma rápida y sencilla desde cualquier dispositivo.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>Productos destacados</h2>
+    <div class="section-divider"></div>
+    <p>Cargando desde el catálogo...</p>
+  </div>
+  <div id="featured-products" class="products-grid"></div>
+</div>
+
+<!-- CATÁLOGO -->
+<div id="page-catalogo" class="page">
+  <div class="section-header">
+    <h2>Catálogo</h2>
+    <div class="section-divider"></div>
+    <p>Toda nuestra colección disponible</p>
+  </div>
+
+  <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;">
+      <input type="text" id="search-input" placeholder="Buscar prendas..." style="width:100%;" oninput="filterProducts()"/>
+    </div>
+    <div class="tabs" style="margin:0;">
+      <button class="tab active" onclick="filterByTalla('',this)">Todas</button>
+      <button class="tab" onclick="filterByTalla('S',this)">S</button>
+      <button class="tab" onclick="filterByTalla('M',this)">M</button>
+      <button class="tab" onclick="filterByTalla('L',this)">L</button>
+    </div>
+    <button class="btn-primary" onclick="showAddProduct()">+ Agregar</button>
+  </div>
+
+  <div id="productos-list" class="products-grid"></div>
+
+  <!-- Modal agregar producto -->
+  <div id="add-product-modal" style="display:none;position:fixed;inset:0;background:rgba(44,31,26,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;">
+    <div class="form-card" style="max-width:480px;width:100%;position:relative;">
+      <button onclick="hideAddProduct()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:1.5rem;color:var(--taupe);">×</button>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:1.5rem;">Agregar Producto</h3>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nombre de la prenda</label>
+          <input type="text" id="p-nombre" placeholder="Ej: Blusa floral manga larga"/>
+        </div>
+        <div class="form-group">
+          <label>Precio ($)</label>
+          <input type="number" id="p-precio" placeholder="0"/>
+        </div>
+        <div class="form-group">
+          <label>Talla</label>
+          <select id="p-talla">
+            <option value="S">S</option>
+            <option value="M" selected>M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Stock disponible</label>
+          <input type="number" id="p-stock" placeholder="0"/>
+        </div>
+      </div>
+      <button class="form-submit" onclick="addProduct()">Agregar al catálogo</button>
+    </div>
+  </div>
+</div>
+
+<!-- USUARIOS -->
+<div id="page-usuarios" class="page">
+  <div class="two-col">
+    <div>
+      <div class="section-header">
+        <h2>Registro</h2>
+        <div class="section-divider"></div>
+        <p>Creá tu perfil y guardá tus medidas</p>
+      </div>
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nombre completo</label>
+            <input type="text" id="u-nombre" placeholder="Tu nombre"/>
+          </div>
+          <div class="form-group full">
+            <label>Correo electrónico</label>
+            <input type="email" id="u-correo" placeholder="tu@correo.com"/>
+          </div>
+          <div class="form-group">
+            <label>Busto (cm)</label>
+            <input type="number" id="u-busto" placeholder="85"/>
+          </div>
+          <div class="form-group">
+            <label>Cintura (cm)</label>
+            <input type="number" id="u-cintura" placeholder="68"/>
+          </div>
+          <div class="form-group full">
+            <label>Cadera (cm)</label>
+            <input type="number" id="u-cadera" placeholder="92"/>
+          </div>
+        </div>
+        <p class="form-hint" style="margin-top:1rem;">Tus medidas nos ayudan a recomendarte la talla perfecta.</p>
+        <button class="form-submit" id="btn-registro" onclick="registrarUsuario()">Crear perfil</button>
+      </div>
+    </div>
+    <div>
+      <div class="medidas-visual" style="margin-bottom:1.5rem;">
+        <div class="medidas-icon">👗</div>
+        <p style="text-align:center;font-size:0.85rem;line-height:1.6;">
+          Medimos principalmente el <strong>busto</strong> para recomendarte entre tallas S, M y L.<br><br>
+          <strong>S</strong> = busto menor a 85 cm<br>
+          <strong>M</strong> = busto entre 85–95 cm<br>
+          <strong>L</strong> = busto mayor a 95 cm
+        </p>
+      </div>
+      <div class="section-header">
+        <h2>Usuarias registradas</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div id="usuarios-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RECOMENDACIÓN -->
+<div id="page-recomendacion" class="page">
+  <div class="section-header">
+    <h2>Talla Ideal</h2>
+    <div class="section-divider"></div>
+    <p>Ingresá tu ID de usuaria para recibir una recomendación personalizada</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="form-card">
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label>ID de usuaria</label>
+          <input type="text" id="rec-id" placeholder="MongoDB ObjectId de tu perfil"/>
+          <span class="form-hint">Encontrá tu ID en la sección de usuarias registradas</span>
+        </div>
+        <button class="form-submit" onclick="obtenerRecomendacion()">Obtener recomendación</button>
+      </div>
+
+      <div style="margin-top:1.5rem;background:var(--warm-white);border:1px solid var(--light-taupe);border-radius:12px;padding:1.25rem;">
+        <p style="font-size:0.85rem;color:var(--taupe);line-height:1.6;">
+          <strong style="color:var(--espresso);">¿Cómo funciona?</strong><br>
+          Nuestro sistema consulta tus medidas y analiza el catálogo disponible para encontrar la prenda que mejor se adapte a tu silueta.
+        </p>
+      </div>
+    </div>
+    <div>
+      <div id="rec-result" style="display:none;"></div>
+      <div id="rec-empty" style="padding:2rem 0;color:var(--taupe);font-size:0.9rem;">
+        <div style="font-size:3rem;margin-bottom:1rem;opacity:0.3;">✨</div>
+        Ingresá tu ID para ver tu recomendación de talla
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CARRITO -->
+<div id="page-carrito" class="page">
+  <div class="section-header">
+    <h2>Carrito</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="form-card" style="margin-bottom:1.5rem;">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:1.25rem;font-weight:400;">Consultar carrito</h3>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>ID de usuaria</label>
+          <input type="text" id="carrito-id" placeholder="ID de tu perfil"/>
+        </div>
+        <button class="btn-primary" style="width:100%;" onclick="verCarrito()">Ver carrito</button>
+      </div>
+      <div id="carrito-items"></div>
+    </div>
+    <div>
+      <div class="form-card">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:1.25rem;font-weight:400;">Agregar al carrito</h3>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>ID de usuaria</label>
+          <input type="text" id="c-usuario" placeholder="ID de usuaria"/>
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>ID de producto</label>
+          <input type="text" id="c-producto" placeholder="ID del producto"/>
+        </div>
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label>Cantidad</label>
+          <input type="number" id="c-cantidad" placeholder="1" value="1" min="1"/>
+        </div>
+        <button class="form-submit" onclick="agregarAlCarrito()">Agregar al carrito</button>
+      </div>
+
+      <div style="margin-top:1.5rem;" id="pago-section" style="display:none;">
+        <div class="form-card">
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin-bottom:1.25rem;font-weight:400;">Realizar pago</h3>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label>ID de usuaria</label>
+            <input type="text" id="pay-usuario" placeholder="ID de usuaria"/>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label>Monto ($)</label>
+            <input type="number" id="pay-monto" placeholder="0"/>
+          </div>
+          <button class="form-submit" onclick="realizarPago()" style="background:var(--sage);">Pagar ahora</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGOS -->
+<div id="page-pagos" class="page">
+  <div class="section-header">
+    <h2>Historial de pagos</h2>
+    <div class="section-divider"></div>
+    <p>Todos los pagos procesados en el sistema</p>
+  </div>
+  <div id="pagos-list"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let allProducts = [];
+let activeTallaFilter = '';
+let cartItemCount = 0;
+
+// NAVIGATION
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const map = { inicio:0, catalogo:1, usuarios:2, recomendacion:3, pagos:4 };
+  if(map[page] !== undefined) btns[map[page]].classList.add('active');
+  if(page === 'catalogo') loadProducts();
+  if(page === 'usuarios') loadUsuarios();
+  if(page === 'carrito') { document.getElementById('pago-section').style.display='block'; }
+  if(page === 'pagos') loadPagos();
+  if(page === 'inicio') loadFeatured();
+}
+
+// TOAST
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// LOADING
+function showLoading(container) {
+  document.getElementById(container).innerHTML =
+    '<div class="loading"><div class="spinner"></div> Cargando...</div>';
+}
+
+// PRODUCT EMOJIS
+function productEmoji(nombre) {
+  const n = (nombre||'').toLowerCase();
+  if(n.includes('blusa') || n.includes('camisa')) return '👚';
+  if(n.includes('vestido')) return '👗';
+  if(n.includes('falda')) return '🩱';
+  if(n.includes('pantalon') || n.includes('jean')) return '👖';
+  if(n.includes('blazer') || n.includes('saco') || n.includes('chaqueta')) return '🥻';
+  return '👗';
+}
+
+function renderProductCard(p, showAdd = true) {
+  return `
+    <div class="product-card">
+      <div class="product-img">
+        ${productEmoji(p.nombre)}
+        <span class="product-tag">${p.talla || 'M'}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.nombre || 'Sin nombre'}</div>
+        <div class="product-stock">✓ ${p.stock || 0} disponibles</div>
+        <div class="product-meta">
+          <span class="product-price">$${(p.precio||0).toLocaleString()}</span>
+          <span class="product-talla">Talla ${p.talla || 'M'}</span>
+        </div>
+        ${showAdd ? `<button class="add-cart-btn" onclick="quickAddCart('${p._id}')">Agregar al carrito</button>` : ''}
+      </div>
+    </div>`;
+}
+
+// LOAD FEATURED
+async function loadFeatured() {
+  try {
+    const r = await fetch(`${API}/productos`);
+    const prods = await r.json();
+    const featured = prods.slice(0,4);
+    const el = document.getElementById('featured-products');
+    if(featured.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">👗</div>Aún no hay productos. <button class="btn-secondary" onclick="showPage(\'catalogo\')" style="margin-top:1rem;">Agregar productos</button></div>';
+      return;
+    }
+    el.innerHTML = featured.map(p => renderProductCard(p)).join('');
+  } catch(e) {
+    document.getElementById('featured-products').innerHTML =
+      '<p style="color:var(--taupe);font-size:0.9rem;">No se pudo conectar con el servidor. Asegurate de que Docker Compose esté corriendo.</p>';
+  }
+}
+
+// PRODUCTS
+async function loadProducts() {
+  showLoading('productos-list');
+  try {
+    const r = await fetch(`${API}/productos`);
+    allProducts = await r.json();
+    renderProducts();
+  } catch(e) {
+    document.getElementById('productos-list').innerHTML =
+      '<p style="color:var(--taupe);">Error al cargar productos. ¿Está corriendo el servidor?</p>';
+  }
+}
+
+function renderProducts() {
+  const search = document.getElementById('search-input')?.value?.toLowerCase() || '';
+  let filtered = allProducts;
+  if(activeTallaFilter) filtered = filtered.filter(p => p.talla === activeTallaFilter);
+  if(search) filtered = filtered.filter(p => (p.nombre||'').toLowerCase().includes(search));
+  const el = document.getElementById('productos-list');
+  if(filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div>No se encontraron prendas con esos filtros.</div>';
+    return;
+  }
+  el.innerHTML = filtered.map(p => renderProductCard(p)).join('');
+}
+
+function filterProducts() { renderProducts(); }
+
+function filterByTalla(talla, btn) {
+  activeTallaFilter = talla;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function showAddProduct() {
+  document.getElementById('add-product-modal').style.display = 'flex';
+}
+function hideAddProduct() {
+  document.getElementById('add-product-modal').style.display = 'none';
+}
+
+async function addProduct() {
+  const nombre = document.getElementById('p-nombre').value;
+  const precio = parseFloat(document.getElementById('p-precio').value);
+  const talla = document.getElementById('p-talla').value;
+  const stock = parseInt(document.getElementById('p-stock').value);
+  if(!nombre || !precio || !stock) { toast('Completá todos los campos', 'error'); return; }
+  try {
+    const r = await fetch(`${API}/productos`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ nombre, precio, talla, stock })
+    });
+    await r.json();
+    toast('Producto agregado al catálogo ✓');
+    hideAddProduct();
+    loadProducts();
+    ['p-nombre','p-precio','p-stock'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { toast('Error al agregar producto', 'error'); }
+}
+
+// QUICK ADD TO CART
+function quickAddCart(idProducto) {
+  document.getElementById('c-producto').value = idProducto;
+  showPage('carrito');
+  toast('Producto seleccionado. Ingresá tu ID para agregarlo al carrito.');
+}
+
+// USUARIOS
+async function loadUsuarios() {
+  const el = document.getElementById('usuarios-list');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Cargando...</div>';
+  try {
+    const r = await fetch(`${API}/usuarios`);
+    const users = await r.json();
+    if(users.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div>Aún no hay usuarias registradas.</div>';
+      return;
+    }
+    el.innerHTML = users.map(u => `
+      <div class="usuario-card">
+        <div class="usuario-avatar">${(u.nombre||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;">
+          <div class="usuario-nombre">${u.nombre}</div>
+          <div class="usuario-correo">${u.correo}</div>
+          <div class="usuario-medidas">
+            ${u.busto ? `<span class="medida-pill">B: ${u.busto}cm</span>` : ''}
+            ${u.cintura ? `<span class="medida-pill">C: ${u.cintura}cm</span>` : ''}
+            ${u.cadera ? `<span class="medida-pill">Ca: ${u.cadera}cm</span>` : ''}
+          </div>
+          <div style="margin-top:0.5rem;">
+            <code style="font-size:0.7rem;color:var(--taupe);background:var(--light-taupe);padding:0.2rem 0.5rem;border-radius:4px;">${u._id}</code>
+          </div>
+        </div>
+        <button onclick="usarIdRec('${u._id}')" title="Usar para recomendación" style="background:none;border:1px solid var(--sand);border-radius:8px;padding:0.4rem 0.75rem;cursor:pointer;font-size:0.78rem;color:var(--taupe);white-space:nowrap;">✨ Talla</button>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--taupe);font-size:0.9rem;">Error al cargar usuarias.</p>';
+  }
+}
+
+function usarIdRec(id) {
+  document.getElementById('rec-id').value = id;
+  showPage('recomendacion');
+  obtenerRecomendacion();
+}
+
+async function registrarUsuario() {
+  const btn = document.getElementById('btn-registro');
+  const data = {
+    nombre: document.getElementById('u-nombre').value,
+    correo: document.getElementById('u-correo').value,
+    busto: parseFloat(document.getElementById('u-busto').value),
+    cintura: parseFloat(document.getElementById('u-cintura').value),
+    cadera: parseFloat(document.getElementById('u-cadera').value)
+  };
+  if(!data.nombre || !data.correo) { toast('Ingresá nombre y correo', 'error'); return; }
+  btn.disabled = true; btn.textContent = 'Creando perfil...';
+  try {
+    const r = await fetch(`${API}/usuarios`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const user = await r.json();
+    toast(`Perfil creado. Tu ID: ${user._id}`);
+    ['u-nombre','u-correo','u-busto','u-cintura','u-cadera'].forEach(id => document.getElementById(id).value = '');
+    loadUsuarios();
+  } catch(e) { toast('Error al crear perfil', 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Crear perfil'; }
+}
+
+// RECOMENDACIÓN
+async function obtenerRecomendacion() {
+  const id = document.getElementById('rec-id').value.trim();
+  if(!id) { toast('Ingresá tu ID de usuaria', 'error'); return; }
+  const resEl = document.getElementById('rec-result');
+  const emptyEl = document.getElementById('rec-empty');
+  resEl.style.display = 'none';
+  emptyEl.innerHTML = '<div class="loading"><div class="spinner"></div> Analizando tus medidas...</div>';
+  try {
+    const r = await fetch(`${API}/recomendacion`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ idUsuario: id })
+    });
+    const data = await r.json();
+    emptyEl.style.display = 'none';
+    resEl.style.display = 'block';
+    resEl.innerHTML = `
+      <div class="rec-card">
+        <div>
+          <div style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--blush);opacity:0.7;margin-bottom:0.5rem;">Talla recomendada</div>
+          <div class="rec-talla">${data.tallaRecomendada}</div>
+        </div>
+        <div class="rec-info" style="flex:1;">
+          <h3>Hola, ${data.usuario?.nombre || 'usuaria'} 👋</h3>
+          <p>Basado en tus medidas corporales, la talla <strong>${data.tallaRecomendada}</strong> es la que mejor se adapta a tu silueta.</p>
+          ${data.usuario?.busto ? `
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;flex-wrap:wrap;">
+            <span style="background:rgba(255,255,255,0.1);border-radius:8px;padding:0.3rem 0.75rem;font-size:0.8rem;">Busto: ${data.usuario.busto}cm</span>
+            ${data.usuario.cintura ? `<span style="background:rgba(255,255,255,0.1);border-radius:8px;padding:0.3rem 0.75rem;font-size:0.8rem;">Cintura: ${data.usuario.cintura}cm</span>` : ''}
+            ${data.usuario.cadera ? `<span style="background:rgba(255,255,255,0.1);border-radius:8px;padding:0.3rem 0.75rem;font-size:0.8rem;">Cadera: ${data.usuario.cadera}cm</span>` : ''}
+          </div>` : ''}
+          ${data.producto ? `
+          <div class="rec-producto">
+            <h4>${productEmoji(data.producto.nombre)} ${data.producto.nombre}</h4>
+            <p>Talla ${data.producto.talla} · $${(data.producto.precio||0).toLocaleString()} · ${data.producto.stock} disponibles</p>
+            <button onclick="quickAddCart('${data.producto._id}')" style="margin-top:0.75rem;background:var(--blush);color:var(--espresso);border:none;border-radius:8px;padding:0.5rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;">Agregar al carrito</button>
+          </div>` : ''}
+        </div>
+      </div>`;
+  } catch(e) {
+    emptyEl.innerHTML = '<div style="color:var(--rose);">Error al obtener recomendación. Verificá el ID ingresado.</div>';
+    emptyEl.style.display = 'block';
+  }
+}
+
+// CARRITO
+async function verCarrito() {
+  const id = document.getElementById('carrito-id').value.trim();
+  if(!id) { toast('Ingresá tu ID de usuaria', 'error'); return; }
+  const el = document.getElementById('carrito-items');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Cargando carrito...</div>';
+  try {
+    const r = await fetch(`${API}/carrito/${id}`);
+    const carrito = await r.json();
+    if(!carrito || !carrito.productos?.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🛍</div>Este carrito está vacío.</div>';
+      return;
+    }
+    const total = carrito.productos.reduce((acc, p) => acc + (p.cantidad || 1) * 100, 0);
+    el.innerHTML = carrito.productos.map((p,i) => `
+      <div class="cart-item">
+        <div class="cart-item-icon">👗</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">Producto ${i+1}</div>
+          <div class="cart-item-meta">ID: ${p.idProducto}</div>
+          <div class="cart-item-meta">Cantidad: ${p.cantidad}</div>
+        </div>
+      </div>`).join('') +
+      `<div class="cart-total">
+        <h3>Resumen del carrito</h3>
+        <div class="cart-total-row"><span>Artículos</span><span>${carrito.productos.length}</span></div>
+        <div class="cart-total-row cart-total-final"><span>Total</span><span>Listo para pagar</span></div>
+        <button onclick="prepararPago('${id}')" style="width:100%;margin-top:1rem;background:var(--rose);color:#fff;border:none;border-radius:10px;padding:0.8rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;letter-spacing:0.04em;">Ir a pagar</button>
+      </div>`;
+  } catch(e) { el.innerHTML = '<p style="color:var(--taupe);">Error al cargar carrito.</p>'; }
+}
+
+function prepararPago(idUsuario) {
+  document.getElementById('pay-usuario').value = idUsuario;
+  toast('Completá el monto y finalizá tu compra');
+}
+
+async function agregarAlCarrito() {
+  const data = {
+    idUsuario: document.getElementById('c-usuario').value.trim(),
+    idProducto: document.getElementById('c-producto').value.trim(),
+    cantidad: parseInt(document.getElementById('c-cantidad').value) || 1
+  };
+  if(!data.idUsuario || !data.idProducto) { toast('Completá todos los campos', 'error'); return; }
+  try {
+    await fetch(`${API}/carrito`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    cartItemCount++;
+    document.getElementById('cart-count').textContent = cartItemCount;
+    toast('Agregado al carrito ✓');
+    document.getElementById('carrito-id').value = data.idUsuario;
+    verCarrito();
+  } catch(e) { toast('Error al agregar al carrito', 'error'); }
+}
+
+// PAGOS
+async function realizarPago() {
+  const data = {
+    idUsuario: document.getElementById('pay-usuario').value.trim(),
+    monto: parseFloat(document.getElementById('pay-monto').value)
+  };
+  if(!data.idUsuario || !data.monto) { toast('Completá ID y monto', 'error'); return; }
+  try {
+    const r = await fetch(`${API}/pagar`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const pago = await r.json();
+    toast(`Pago de $${data.monto} procesado ✓`);
+    document.getElementById('pay-monto').value = '';
+  } catch(e) { toast('Error al procesar pago', 'error'); }
+}
+
+async function loadPagos() {
+  const el = document.getElementById('pagos-list');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Cargando pagos...</div>';
+  try {
+    const r = await fetch(`${API}/pagos`);
+    const pagos = await r.json();
+    if(pagos.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div>No hay pagos registrados aún.</div>';
+      return;
+    }
+    el.innerHTML = pagos.reverse().map(p => `
+      <div class="pago-card">
+        <div>
+          <div style="font-weight:500;font-size:0.95rem;">$${(p.monto||0).toLocaleString()}</div>
+          <div style="font-size:0.8rem;color:var(--taupe);margin-top:0.2rem;">
+            ${new Date(p.fecha).toLocaleDateString('es-AR', {day:'2-digit',month:'short',year:'numeric'})}
+          </div>
+          <div style="font-size:0.75rem;color:var(--taupe);margin-top:0.2rem;font-family:monospace;">${p.idUsuario}</div>
+        </div>
+        <span class="pago-estado">● ${p.estado || 'aprobado'}</span>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<p style="color:var(--taupe);">Error al cargar pagos.</p>'; }
+}
+
+// INIT
+loadFeatured();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+user-service/node_modules
+catalog-service/node_modules
+recommendation-service/node_modules
+cart-service/node_modules
+payment-service/node_modules
+tests/reporte.html
+tests/reporte.json
