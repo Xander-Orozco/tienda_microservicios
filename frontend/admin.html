@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartFit Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream:#f9f6f1;--warm:#fefcf8;--blush:#e8c4b8;--rose:#c4776a;--deep-rose:#8b4a40;
+    --espresso:#2c1f1a;--taupe:#9e8e84;--sand:#d4c4b8;--sage:#8a9e8a;--light:#ede8e3;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--espresso);display:flex;min-height:100vh;}
+
+  /* SIDEBAR */
+  aside{width:220px;background:var(--espresso);display:flex;flex-direction:column;padding:0;flex-shrink:0;position:sticky;top:0;height:100vh;}
+  .aside-logo{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .aside-logo h1{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--blush);letter-spacing:0.06em;}
+  .aside-logo span{font-style:italic;color:var(--rose);}
+  .aside-logo p{font-size:0.7rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.2rem;}
+  nav{flex:1;padding:1rem 0;}
+  .nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1.5rem;cursor:pointer;
+    color:rgba(255,255,255,0.45);font-size:0.85rem;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;}
+  .nav-item:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.05);}
+  .nav-item.active{color:var(--blush);border-left-color:var(--rose);background:rgba(196,119,106,0.1);}
+  .nav-icon{font-size:1rem;width:18px;text-align:center;}
+  .aside-footer{padding:1.25rem 1.5rem;border-top:1px solid rgba(255,255,255,0.08);}
+  .aside-footer a{font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none;display:block;transition:color 0.2s;}
+  .aside-footer a:hover{color:var(--blush);}
+
+  /* MAIN */
+  main{flex:1;overflow-y:auto;padding:2rem 2.5rem;}
+  .page-header{margin-bottom:2rem;}
+  .page-header h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;}
+  .page-header p{color:var(--taupe);font-size:0.88rem;margin-top:0.3rem;}
+  .divider{width:36px;height:2px;background:var(--rose);margin:0.6rem 0 0.8rem;}
+
+  /* METRIC CARDS */
+  .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem;margin-bottom:2.5rem;}
+  .metric-card{background:var(--warm);border:1px solid var(--light);border-radius:14px;padding:1.5rem;transition:transform 0.2s;}
+  .metric-card:hover{transform:translateY(-2px);}
+  .metric-icon{font-size:1.5rem;margin-bottom:0.75rem;}
+  .metric-label{font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--taupe);margin-bottom:0.35rem;}
+  .metric-value{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:400;color:var(--espresso);line-height:1;}
+  .metric-sub{font-size:0.75rem;color:var(--taupe);margin-top:0.4rem;}
+
+  /* TABLES */
+  .section{background:var(--warm);border:1px solid var(--light);border-radius:14px;margin-bottom:1.5rem;overflow:hidden;}
+  .section-head{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--light);}
+  .section-head h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;}
+  .section-head span{font-size:0.75rem;color:var(--taupe);}
+  .refresh-btn{background:none;border:1px solid var(--sand);border-radius:8px;padding:0.3rem 0.75rem;
+    font-size:0.75rem;color:var(--taupe);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+  .refresh-btn:hover{border-color:var(--rose);color:var(--rose);}
+  table{width:100%;border-collapse:collapse;}
+  th{padding:0.6rem 1.5rem;text-align:left;font-size:0.7rem;font-weight:500;
+    letter-spacing:0.1em;text-transform:uppercase;color:var(--taupe);background:var(--cream);border-bottom:1px solid var(--light);}
+  td{padding:0.85rem 1.5rem;font-size:0.87rem;border-bottom:1px solid var(--light);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--cream);}
+  .badge{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(138,158,138,0.15);
+    color:var(--sage);font-size:0.7rem;font-weight:500;padding:0.2rem 0.6rem;border-radius:10px;}
+  .talla-pill{background:var(--light);color:var(--taupe);font-size:0.72rem;font-weight:500;
+    padding:0.2rem 0.55rem;border-radius:7px;}
+  .avatar-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blush),var(--sand));
+    display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;
+    font-weight:600;color:var(--deep-rose);margin-right:0.6rem;vertical-align:middle;}
+  .medidas-row{display:flex;gap:0.4rem;flex-wrap:wrap;}
+  .medida-mini{background:var(--light);color:var(--taupe);font-size:0.68rem;padding:0.15rem 0.45rem;border-radius:5px;}
+  .empty-row td{text-align:center;color:var(--taupe);font-style:italic;padding:2rem;}
+  .loading-row td{text-align:center;color:var(--taupe);padding:1.5rem;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--espresso);color:var(--warm);
+    padding:0.75rem 1.25rem;border-radius:10px;font-size:0.85rem;font-weight:500;
+    transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:999;border-left:4px solid var(--rose);}
+  .toast.show{transform:translateY(0);opacity:1;}
+
+  /* SPINNER */
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--sand);
+    border-top-color:var(--rose);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="aside-logo">
+    <h1>Smart<span>Fit</span></h1>
+    <p>Panel Admin</p>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="showSection('overview')">
+      <span class="nav-icon">◈</span> Resumen
+    </div>
+    <div class="nav-item" onclick="showSection('usuarios')">
+      <span class="nav-icon">♀</span> Usuarias
+    </div>
+    <div class="nav-item" onclick="showSection('productos')">
+      <span class="nav-icon">◎</span> Productos
+    </div>
+    <div class="nav-item" onclick="showSection('pagos')">
+      <span class="nav-icon">◇</span> Pagos
+    </div>
+    <div class="nav-item" onclick="showSection('carritos')">
+      <span class="nav-icon">○</span> Carritos
+    </div>
+  </nav>
+  <div class="aside-footer">
+    <a href="index.html">← Volver a la tienda</a>
+  </div>
+</aside>
+
+<main>
+  <!-- OVERVIEW -->
+  <div id="sec-overview">
+    <div class="page-header">
+      <h2>Resumen general</h2>
+      <div class="divider"></div>
+      <p>Estado actual de SmartFit Fashion</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">👥</div>
+        <div class="metric-label">Usuarias</div>
+        <div class="metric-value" id="m-usuarios">—</div>
+        <div class="metric-sub">registradas</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">👗</div>
+        <div class="metric-label">Productos</div>
+        <div class="metric-value" id="m-productos">—</div>
+        <div class="metric-sub">en catálogo</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">💳</div>
+        <div class="metric-label">Pagos</div>
+        <div class="metric-value" id="m-pagos">—</div>
+        <div class="metric-sub">procesados</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🛍</div>
+        <div class="metric-label">Ingresos</div>
+        <div class="metric-value" id="m-ingresos">—</div>
+        <div class="metric-sub">total facturado</div>
+      </div>
+    </div>
+
+    <!-- ÚLTIMOS USUARIOS -->
+    <div class="section">
+      <div class="section-head">
+        <h3>Últimas usuarias</h3>
+        <button class="refresh-btn" onclick="loadAll()">↺ Actualizar</button>
+      </div>
+      <table>
+        <thead><tr><th>Usuaria</th><th>Correo</th><th>Medidas</th></tr></thead>
+        <tbody id="t-usuarios-ov"></tbody>
+      </table>
+    </div>
+
+    <!-- ÚLTIMOS PAGOS -->
+    <div class="section">
+      <div class="section-head">
+        <h3>Últimos pagos</h3>
+        <span id="total-label"></span>
+      </div>
+      <table>
+        <thead><tr><th>ID Usuaria</th><th>Monto</th><th>Estado</th><th>Fecha</th></tr></thead>
+        <tbody id="t-pagos-ov"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USUARIAS -->
+  <div id="sec-usuarios" style="display:none;">
+    <div class="page-header">
+      <h2>Usuarias registradas</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="section">
+      <div class="section-head">
+        <h3>Todas las usuarias</h3>
+        <button class="refresh-btn" onclick="loadUsuarios()">↺ Actualizar</button>
+      </div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Medidas</th><th>ID</th></tr></thead>
+        <tbody id="t-usuarios-full"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div id="sec-productos" style="display:none;">
+    <div class="page-header">
+      <h2>Catálogo de productos</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="section">
+      <div class="section-head">
+        <h3>Todos los productos</h3>
+        <button class="refresh-btn" onclick="loadProductos()">↺ Actualizar</button>
+      </div>
+      <table>
+        <thead><tr><th>Nombre</th><th>Talla</th><th>Precio</th><th>Stock</th></tr></thead>
+        <tbody id="t-productos-full"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAGOS -->
+  <div id="sec-pagos" style="display:none;">
+    <div class="page-header">
+      <h2>Historial de pagos</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="section">
+      <div class="section-head">
+        <h3>Todos los pagos</h3>
+        <button class="refresh-btn" onclick="loadPagos()">↺ Actualizar</button>
+      </div>
+      <table>
+        <thead><tr><th>ID Usuaria</th><th>Monto</th><th>Estado</th><th>Fecha</th></tr></thead>
+        <tbody id="t-pagos-full"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARRITOS -->
+  <div id="sec-carritos" style="display:none;">
+    <div class="page-header">
+      <h2>Carritos activos</h2>
+      <div class="divider"></div>
+      <p>Consultá el carrito de cualquier usuaria por su ID</p>
+    </div>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;">
+      <input id="carrito-search-id" type="text" placeholder="ID de usuaria..."
+        style="flex:1;padding:0.65rem 1rem;border:1.5px solid var(--sand);border-radius:10px;
+        font-family:'DM Sans',sans-serif;font-size:0.9rem;background:var(--cream);color:var(--espresso);outline:none;"/>
+      <button onclick="buscarCarrito()"
+        style="background:var(--espresso);color:var(--warm);border:none;border-radius:10px;
+        padding:0.65rem 1.25rem;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;">Buscar</button>
+    </div>
+    <div id="carrito-result"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3000';
+const sections = ['overview','usuarios','productos','pagos','carritos'];
+
+function showSection(name) {
+  sections.forEach(s => {
+    document.getElementById('sec-'+s).style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    el.classList.toggle('active', el.textContent.trim().toLowerCase().includes(
+      {overview:'resumen',usuarios:'usuarias',productos:'productos',pagos:'pagos',carritos:'carritos'}[name]
+    ));
+  });
+  if(name === 'usuarios') loadUsuarios();
+  if(name === 'productos') loadProductos();
+  if(name === 'pagos') loadPagos();
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function loadingRow(tbody, cols) {
+  document.getElementById(tbody).innerHTML =
+    `<tr class="loading-row"><td colspan="${cols}"><span class="spinner"></span> Cargando...</td></tr>`;
+}
+
+function emptyRow(tbody, msg, cols) {
+  document.getElementById(tbody).innerHTML =
+    `<tr class="empty-row"><td colspan="${cols}">${msg}</td></tr>`;
+}
+
+function fmtDate(d) {
+  return new Date(d).toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+async function loadAll() {
+  try {
+    const [users, prods, pagos] = await Promise.all([
+      fetch(`${API}/usuarios`).then(r=>r.json()),
+      fetch(`${API}/productos`).then(r=>r.json()),
+      fetch(`${API}/pagos`).then(r=>r.json())
+    ]);
+
+    document.getElementById('m-usuarios').textContent = users.length;
+    document.getElementById('m-productos').textContent = prods.length;
+    document.getElementById('m-pagos').textContent = pagos.length;
+    const total = pagos.reduce((a,p)=>a+(p.monto||0),0);
+    document.getElementById('m-ingresos').textContent = '$'+total.toLocaleString('es-AR');
+    document.getElementById('total-label').textContent = 'Total: $'+total.toLocaleString('es-AR');
+
+    // Últimas 5 usuarias
+    const recent = [...users].reverse().slice(0,5);
+    document.getElementById('t-usuarios-ov').innerHTML = recent.length ? recent.map(u=>`
+      <tr>
+        <td><span class="avatar-sm">${(u.nombre||'?')[0].toUpperCase()}</span>${u.nombre||'—'}</td>
+        <td style="color:var(--taupe)">${u.correo||'—'}</td>
+        <td><div class="medidas-row">
+          ${u.busto?`<span class="medida-mini">B:${u.busto}</span>`:''}
+          ${u.cintura?`<span class="medida-mini">C:${u.cintura}</span>`:''}
+          ${u.cadera?`<span class="medida-mini">Ca:${u.cadera}</span>`:''}
+        </div></td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="3">Sin usuarias aún</td></tr>`;
+
+    // Últimos 5 pagos
+    const recPagos = [...pagos].reverse().slice(0,5);
+    document.getElementById('t-pagos-ov').innerHTML = recPagos.length ? recPagos.map(p=>`
+      <tr>
+        <td style="font-family:monospace;font-size:0.78rem;color:var(--taupe)">${p.idUsuario}</td>
+        <td><strong>$${(p.monto||0).toLocaleString()}</strong></td>
+        <td><span class="badge">● ${p.estado||'aprobado'}</span></td>
+        <td style="color:var(--taupe)">${fmtDate(p.fecha)}</td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="4">Sin pagos aún</td></tr>`;
+
+  } catch(e) {
+    toast('Error conectando con el servidor');
+    ['t-usuarios-ov','t-pagos-ov'].forEach(id => emptyRow(id,'Error de conexión',3));
+  }
+}
+
+async function loadUsuarios() {
+  loadingRow('t-usuarios-full',4);
+  try {
+    const users = await fetch(`${API}/usuarios`).then(r=>r.json());
+    document.getElementById('t-usuarios-full').innerHTML = users.length ? [...users].reverse().map(u=>`
+      <tr>
+        <td><span class="avatar-sm">${(u.nombre||'?')[0].toUpperCase()}</span>${u.nombre||'—'}</td>
+        <td style="color:var(--taupe)">${u.correo||'—'}</td>
+        <td><div class="medidas-row">
+          ${u.busto?`<span class="medida-mini">B:${u.busto}cm</span>`:''}
+          ${u.cintura?`<span class="medida-mini">C:${u.cintura}cm</span>`:''}
+          ${u.cadera?`<span class="medida-mini">Ca:${u.cadera}cm</span>`:''}
+        </div></td>
+        <td><code style="font-size:0.7rem;color:var(--taupe)">${u._id}</code></td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="4">Sin usuarias registradas</td></tr>`;
+  } catch(e) { emptyRow('t-usuarios-full','Error de conexión',4); }
+}
+
+async function loadProductos() {
+  loadingRow('t-productos-full',4);
+  try {
+    const prods = await fetch(`${API}/productos`).then(r=>r.json());
+    document.getElementById('t-productos-full').innerHTML = prods.length ? prods.map(p=>`
+      <tr>
+        <td>${p.nombre||'—'}</td>
+        <td><span class="talla-pill">${p.talla||'—'}</span></td>
+        <td><strong>$${(p.precio||0).toLocaleString()}</strong></td>
+        <td>${p.stock||0} u.</td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="4">Sin productos en catálogo</td></tr>`;
+  } catch(e) { emptyRow('t-productos-full','Error de conexión',4); }
+}
+
+async function loadPagos() {
+  loadingRow('t-pagos-full',4);
+  try {
+    const pagos = await fetch(`${API}/pagos`).then(r=>r.json());
+    document.getElementById('t-pagos-full').innerHTML = pagos.length ? [...pagos].reverse().map(p=>`
+      <tr>
+        <td style="font-family:monospace;font-size:0.78rem;color:var(--taupe)">${p.idUsuario}</td>
+        <td><strong>$${(p.monto||0).toLocaleString()}</strong></td>
+        <td><span class="badge">● ${p.estado||'aprobado'}</span></td>
+        <td style="color:var(--taupe)">${fmtDate(p.fecha)}</td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="4">Sin pagos registrados</td></tr>`;
+  } catch(e) { emptyRow('t-pagos-full','Error de conexión',4); }
+}
+
+async function buscarCarrito() {
+  const id = document.getElementById('carrito-search-id').value.trim();
+  if(!id) return;
+  const el = document.getElementById('carrito-result');
+  el.innerHTML = '<p style="color:var(--taupe)"><span class="spinner"></span> Buscando...</p>';
+  try {
+    const c = await fetch(`${API}/carrito/${id}`).then(r=>r.json());
+    if(!c || !c.productos?.length) {
+      el.innerHTML = '<p style="color:var(--taupe);font-style:italic;">Este carrito está vacío.</p>'; return;
+    }
+    el.innerHTML = `<div class="section"><div class="section-head"><h3>Carrito de ${id.slice(-8)}...</h3><span>${c.productos.length} productos</span></div>
+      <table><thead><tr><th>ID Producto</th><th>Cantidad</th></tr></thead><tbody>
+      ${c.productos.map(p=>`<tr><td style="font-family:monospace;font-size:0.8rem">${p.idProducto}</td><td>${p.cantidad}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  } catch(e) { el.innerHTML = '<p style="color:var(--rose);">Error al buscar carrito.</p>'; }
+}
+
+loadAll();
+</script>
+</body>
+</html>

@@ -1,3 +1,4 @@
 node_modules
 tests/reporte.html
 tests/reporte.json
+.env

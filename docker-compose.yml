@@ -1,10 +1,12 @@
 services:
- 
+
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
     ports:
       - "3000:3000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     depends_on:
       - user-service
       - catalog-service
@@ -13,7 +15,7 @@ services:
       - payment-service
     networks:
       - red-app
- 
+
   frontend:
     build: ./frontend
     container_name: frontend
@@ -31,14 +33,15 @@ services:
       - mongodb
     networks:
       - red-app
- 
+
   catalog-service:
     build: ./catalog-service
+    container_name: catalog-service
     depends_on:
       - mongodb
     networks:
       - red-app
- 
+
   recommendation-service:
     build: ./recommendation-service
     container_name: recommendation-service
@@ -47,7 +50,7 @@ services:
       - catalog-service
     networks:
       - red-app
- 
+
   cart-service:
     build: ./cart-service
     container_name: cart-service
@@ -55,7 +58,7 @@ services:
       - mongodb
     networks:
       - red-app
- 
+
   payment-service:
     build: ./payment-service
     container_name: payment-service
@@ -63,7 +66,7 @@ services:
       - mongodb
     networks:
       - red-app
- 
+
   mongodb:
     image: mongo
     container_name: mongodb
@@ -71,7 +74,7 @@ services:
       - mongo_data:/data/db
     networks:
       - red-app
- 
+
   k6:
     image: grafana/k6
     container_name: k6-prueba
@@ -82,9 +85,9 @@ services:
     networks:
       - red-app
     command: run /scripts/performance-test.js
- 
+
 volumes:
   mongo_data:
- 
+
 networks:
   red-app:
