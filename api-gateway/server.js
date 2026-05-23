@@ -28,6 +28,12 @@ app.post("/usuarios", async (req, res) => {
   catch (e) { res.status(500).json({error:"Error"}); }
 });
 
+// ─── USUARIO POR ID (usado por frontend para refrescar sesión) ─
+app.get("/usuarios/:id", async (req, res) => {
+  try { res.json((await axios.get(`http://user-service:3001/usuarios/${req.params.id}`)).data); }
+  catch (e) { res.status(e.response?.status||500).json(e.response?.data||{error:"Error"}); }
+});
+
 // ─── PRODUCTOS ────────────────────────────────────────────
 app.get("/productos", async (req, res) => {
   try { res.json((await axios.get("http://catalog-service:3002/productos")).data); }

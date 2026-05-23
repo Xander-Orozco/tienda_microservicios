@@ -454,11 +454,23 @@ async function doRegister() {
 document.getElementById('login-modal').addEventListener('click', e => { if (e.target.id === 'login-modal') closeLogin(); });
 document.getElementById('pay-modal').addEventListener('click', e => { if (e.target.id === 'pay-modal') document.getElementById('pay-modal').classList.remove('open'); });
 
-// Restaurar sesión guardada
-(function() {
+// Restaurar sesión guardada — y refrescar datos del usuario desde el servidor
+(async function() {
   const saved = localStorage.getItem('sf_user');
   const token = localStorage.getItem('sf_token');
-  if (saved && token) { try { setLoggedIn({...JSON.parse(saved), token}); } catch {} }
+  if (!saved || !token) return;
+  try {
+    const base = JSON.parse(saved);
+    // Restaurar inmediatamente con datos guardados para que el UI responda rápido
+    setLoggedIn({...base, token});
+    // Luego refrescar desde el servidor para obtener medidas actualizadas
+    const resp = await fetch(`${API}/usuarios/${base._id}`);
+    if (resp.ok) {
+      const fresh = await resp.json();
+      currentUser = {...currentUser, ...fresh};
+      localStorage.setItem('sf_user', JSON.stringify({...fresh, token}));
+    }
+  } catch {}
 })();
 
 // ── PRODUCTOS ───────────────────────────────────────────────
