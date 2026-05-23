@@ -216,7 +216,7 @@ input:focus,select:focus{border-color:var(--rose);}
     <button class="nav-btn" onclick="showPage('pagos')">Pagos</button>
   </div>
   <div class="nav-right">
-    <a href="admin.html" class="admin-link">Admin ◈</a>
+    <div id="admin-link-wrapper"></div>
     <div id="nav-user-area"><button class="user-pill" onclick="openLogin()">Iniciar sesión</button></div>
     <button class="nav-cart-btn" onclick="showPage('carrito')">🛍 <span class="cart-badge" id="cart-count">0</span></button>
   </div>
@@ -255,22 +255,8 @@ input:focus,select:focus{border-color:var(--rose);}
       <button class="tab" onclick="filterByTalla('M',this)">M</button>
       <button class="tab" onclick="filterByTalla('L',this)">L</button>
     </div>
-    <button class="btn-primary" onclick="requireLogin(showAddProduct)">+ Agregar</button>
   </div>
   <div id="productos-list" class="products-grid"></div>
-  <div id="add-product-modal" style="display:none;position:fixed;inset:0;background:rgba(44,31,26,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem;">
-    <div class="form-card" style="max-width:460px;width:100%;position:relative;">
-      <button onclick="hideAddProduct()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:1.5rem;color:var(--taupe);">×</button>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:1.5rem;">Agregar Producto</h3>
-      <div class="form-grid">
-        <div class="form-group full"><label>Nombre</label><input type="text" id="p-nombre" placeholder="Ej: Blusa floral manga larga"/></div>
-        <div class="form-group"><label>Precio ($)</label><input type="number" id="p-precio" placeholder="0"/></div>
-        <div class="form-group"><label>Talla</label><select id="p-talla"><option value="S">S</option><option value="M" selected>M</option><option value="L">L</option></select></div>
-        <div class="form-group full"><label>Stock</label><input type="number" id="p-stock" placeholder="0"/></div>
-      </div>
-      <button class="form-submit" onclick="addProduct()">Agregar al catálogo</button>
-    </div>
-  </div>
 </div>
 
 <!-- TALLA IDEAL -->
@@ -352,6 +338,7 @@ let pagoTotal = 0;
 
 // ── NAVEGACIÓN ──────────────────────────────────────────────
 function showPage(page) {
+  window.scrollTo(0, 0);
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
@@ -407,6 +394,7 @@ function setLoggedIn(user) {
     `<button class="user-pill" onclick="doLogout()">${user.nombre[0].toUpperCase()} ${user.nombre.split(' ')[0]} · Salir</button>`;
   closeLogin();
   updateCartCount();
+  updateAdminLink();
 }
 
 function doLogout() {
@@ -416,6 +404,7 @@ function doLogout() {
   document.getElementById('nav-user-area').innerHTML =
     `<button class="user-pill" onclick="openLogin()">Iniciar sesión</button>`;
   document.getElementById('cart-count').textContent = '0';
+  updateAdminLink();
   toast('Sesión cerrada');
 }
 
@@ -541,23 +530,6 @@ function agregarDesdeProducto(idProducto) {
   toast('Producto seleccionado. Confirmá la cantidad y agregalo al carrito.');
 }
 
-function showAddProduct() { document.getElementById('add-product-modal').style.display = 'flex'; }
-function hideAddProduct() { document.getElementById('add-product-modal').style.display = 'none'; }
-
-async function addProduct() {
-  const nombre = document.getElementById('p-nombre').value.trim();
-  const precio = parseFloat(document.getElementById('p-precio').value);
-  const talla  = document.getElementById('p-talla').value;
-  const stock  = parseInt(document.getElementById('p-stock').value);
-  if (!nombre || !precio || !stock) { toast('Completá todos los campos', 'error'); return; }
-  try {
-    await fetch(`${API}/productos`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre,precio,talla,stock}) });
-    toast('Producto agregado al catálogo ✓');
-    hideAddProduct();
-    ['p-nombre','p-precio','p-stock'].forEach(id => document.getElementById(id).value = '');
-    loadProducts();
-  } catch { toast('Error al agregar producto', 'error'); }
-}
 
 // ── RECOMENDACIÓN ───────────────────────────────────────────
 function initRecPage() {
@@ -830,8 +802,21 @@ async function sendChat() {
   }
 }
 
+
+// ── LINK ADMIN (solo visible para admins) ──────────────────
+function updateAdminLink() {
+  const wrapper = document.getElementById('admin-link-wrapper');
+  if (!wrapper) return;
+  if (currentUser && currentUser.rol === 'admin') {
+    wrapper.innerHTML = '<a href="admin.html" class="admin-link">Admin ◈</a>';
+  } else {
+    wrapper.innerHTML = '';
+  }
+}
+
 // INIT
 loadFeatured();
+updateAdminLink();
 </script>
 </body>
 </html>
