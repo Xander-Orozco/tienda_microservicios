@@ -1,12 +1,25 @@
 services:
 
+  # ── TRAEFIK: balanceador de carga ─────────────────────────
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+    ports:
+      - "3000:80"      # API → http://localhost:3000
+      - "8090:8080"    # Dashboard → http://localhost:8090
+    networks:
+      - red-app
+    restart: unless-stopped
+
+  # ── API GATEWAY (sin container_name → escalable con --scale) ──
   api-gateway:
     build: ./api-gateway
-    container_name: api-gateway
-    ports:
-      - "3000:3000"
+    # SIN container_name fijo para permitir múltiples instancias
     environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
     depends_on:
       - user-service
       - catalog-service
@@ -16,16 +29,18 @@ services:
     networks:
       - red-app
 
+  # ── FRONTEND ──────────────────────────────────────────────
   frontend:
     build: ./frontend
     container_name: frontend
     ports:
       - "8082:80"
     depends_on:
-      - api-gateway
+      - traefik
     networks:
       - red-app
 
+  # ── MICROSERVICIOS ────────────────────────────────────────
   user-service:
     build: ./user-service
     container_name: user-service
@@ -67,6 +82,7 @@ services:
     networks:
       - red-app
 
+  # ── BASE DE DATOS ─────────────────────────────────────────
   mongodb:
     image: mongo
     container_name: mongodb
@@ -75,13 +91,14 @@ services:
     networks:
       - red-app
 
+  # ── PRUEBAS DE CARGA con k6 ───────────────────────────────
   k6:
     image: grafana/k6
     container_name: k6-prueba
     volumes:
       - ./tests:/scripts
     depends_on:
-      - api-gateway
+      - traefik
     networks:
       - red-app
     command: run /scripts/performance-test.js
@@ -91,3 +108,4 @@ volumes:
 
 networks:
   red-app:
+    driver: bridge

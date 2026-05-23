@@ -1,0 +1,19 @@
+http:
+  routers:
+    api-gateway:
+      rule: "PathPrefix(`/`)"
+      entryPoints:
+        - web
+      service: api-gateway
+
+  services:
+    api-gateway:
+      loadBalancer:
+        servers:
+          - url: "http://tienda_microservicios-api-gateway-1:3000"
+          - url: "http://tienda_microservicios-api-gateway-2:3000"
+          - url: "http://tienda_microservicios-api-gateway-3:3000"
+        healthCheck:
+          path: /productos
+          interval: "10s"
+          timeout: "3s"
